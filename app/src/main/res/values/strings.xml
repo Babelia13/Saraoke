@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">"Saraoke"</string>
+    <string name="song_lyrics_error_message">"Song lyrics cannot be loaded"</string>
+</resources>
