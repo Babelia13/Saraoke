@@ -2,6 +2,7 @@ package com.babelia.saraoke.lyrics
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import com.babelia.saraoke.BaseBroadcastReceiver
 import mini.Dispatcher
 import org.kodein.di.instance
@@ -12,6 +13,17 @@ import timber.log.Timber
  */
 class MusicBroadcastReceiver : BaseBroadcastReceiver() {
 
+    companion object {
+        /**
+         * Get an [IntentFilter] to start this broadcast receiver.
+         */
+        fun getIntentFilter() =
+            IntentFilter().apply {
+                addAction("com.spotify.music.metadatachanged")
+                addAction("com.spotify.music.playbackstatechanged")
+            }
+    }
+
     private val dispatcher: Dispatcher by instance()
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -20,18 +32,16 @@ class MusicBroadcastReceiver : BaseBroadcastReceiver() {
         with(intent) {
             // Include "com.spotify.music.playbackstatechanged" for playing/pause status changes
             if (action == "com.spotify.music.metadatachanged") {
-                Timber.d("Spotify metadata changed: $action")
                 val artist = getStringExtra("artist")
                 val album = getStringExtra("album")
                 val track = getStringExtra("track")
-                val playing = getBooleanExtra("playing", false)
-                Timber.d("New Spotify song detected: $artist > $album > $track > Is playing? $playing")
+                Timber.v("New Spotify song detected: $artist > $album > $track")
 
                 if (!artist.isNullOrEmpty() && !album.isNullOrEmpty() && !track.isNullOrEmpty()) {
                     // dispatchBlocking because after receiving this action, GetLyricsOfSongAction is executed
                     // and we need to finish the execution of NewSongPlayedOnSpotifyAction and theN dispatch
                     // the other one. If not, as both actions act over the same state, it is not set properly
-                    dispatcher.dispatchBlocking(NewSongPlayedOnSpotifyAction(artist, album, track))
+                    dispatcher.dispatchBlocking(NewSongPlayedAction(artist, album, track))
                 }
             }
         }

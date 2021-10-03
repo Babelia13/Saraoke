@@ -4,7 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.babelia.saraoke.BaseViewModel
-import com.babelia.saraoke.lyrics.GetLyricsOfSongAction
+import com.babelia.saraoke.lyrics.GetSongLyricsAction
 import com.babelia.saraoke.lyrics.LyricsState
 import com.babelia.saraoke.lyrics.LyricsStore
 import com.babelia.saraoke.lyrics.Song
@@ -34,8 +34,9 @@ class LyricsViewModel(app: Application) : BaseViewModel(app) {
     val currentSongFlow: StateFlow<Song?> get() = _currentSongFlow
 
     init {
+
         lyricsStore.flow()
-            .selectNotNull { it.currentSongOnSpotify }
+            .selectNotNull { it.songCurrentlyPlaying }
             .onEach {
                 _currentSongFlow.value = it
                 getLyricsOfSong(it)
@@ -52,7 +53,7 @@ class LyricsViewModel(app: Application) : BaseViewModel(app) {
 
     private fun getLyricsOfSong(song: Song) {
         viewModelScope.launch {
-            dispatcher.dispatch(GetLyricsOfSongAction(song))
+            dispatcher.dispatch(GetSongLyricsAction(song))
         }
     }
 }
@@ -63,11 +64,11 @@ data class LyricsViewData(val  lyrics: String) {
         fun from(state: LyricsState): Resource<LyricsViewData> = with(state) {
             return when {
                 songLyricsTask.isSuccess -> {
-                    if (songLyrics != null && currentSongOnSpotify != null) {
+                    if (songLyrics != null && songCurrentlyPlaying != null) {
                         Resource.success(LyricsViewData(songLyrics))
                     } else {
                         Resource.failure(IllegalArgumentException("Not lyrics found for song: " +
-                                "${state.currentSongOnSpotify}"))
+                                "${state.songCurrentlyPlaying}"))
                     }
                 }
                 songLyricsTask.isFailure ->

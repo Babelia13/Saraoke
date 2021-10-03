@@ -1,7 +1,11 @@
 # Saraoke
-Basic Android application that shown the lyrics of the song it's being listening on Spotify.
+Basic Android application that shown the lyrics of the song it's being listening on the Android device.
 
 #### 🚧 Work in progress 🚧
+
+Native Android [`MediaSessionManager`](https://developer.android.com/reference/android/media/session/MediaSessionManager) is used to listen to new media session and extracts the media metadata of the song is being listening. [`MediaController`](https://developer.android.com/reference/android/media/session/MediaController) provides a [callback](https://developer.android.com/reference/android/media/session/MediaController.Callback) for receiving updates from the session.
+
+User has to grant notification permission for the app to allow it listening media changes.
 
 ## Tech-stack
 - [100% Kotlin](https://kotlinlang.org/) + [Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html) + [Flow](https://kotlinlang.org/docs/flow.html)
@@ -15,6 +19,7 @@ Basic Android application that shown the lyrics of the song it's being listening
 ### Utils
 - [Detekt](https://github.com/arturbosch/detekt): Code smell analysis for Kotlin projects
 - [Timber](https://github.com/JakeWharton/timber): Custom logger on top of Android's normal Log class
+- [Jsoup](https://jsoup.org/): Java HTML Parser for fetching URLs and extracting and manipulating data
 
 ## Architecture
 

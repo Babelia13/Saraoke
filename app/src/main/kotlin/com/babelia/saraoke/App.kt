@@ -6,6 +6,7 @@ import androidx.annotation.RestrictTo
 import androidx.lifecycle.ViewModelProvider
 import com.babelia.saraoke.lyrics.LyricsModule
 import com.babelia.saraoke.lyrics.ui.LyricsViewModel
+import com.babelia.saraoke.lyrics.ui.MediaPlaybackViewModel
 import com.babelia.saraoke.network.NetworkModule
 import mini.Dispatcher
 import mini.LoggerMiddleware
@@ -118,6 +119,7 @@ object AppModule {
 object ViewModelsModule {
     @Suppress("UndocumentedPublicFunction")
     fun create() = DI.Module("HomeViewModelsModule", true) {
+        bindViewModel { MediaPlaybackViewModel(instance(App.KODEIN_APP_TAG)) }
         bindViewModel { LyricsViewModel(instance(App.KODEIN_APP_TAG)) }
     }
 }

@@ -1,10 +1,11 @@
 package com.babelia.saraoke
 
-import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
@@ -13,10 +14,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.babelia.saraoke.lyrics.MusicBroadcastReceiver
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.babelia.saraoke.lyrics.ui.MediaPlaybackViewModel
 import com.babelia.saraoke.navigation.MainNavGraph
 import com.babelia.saraoke.ui.components.InsetAwareTopAppBar
 import com.babelia.saraoke.ui.theme.AndroidArchitectureExampleTheme
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import mini.kodein.android.viewModel
 import org.kodein.di.compose.withDI
 
 /**
@@ -24,15 +27,14 @@ import org.kodein.di.compose.withDI
  */
 class MainActivity : BaseActivity() {
 
-    val musicBroadcastReceiver = MusicBroadcastReceiver()
+    private val musicBroadcastReceiver = MusicBroadcastReceiver()
+    private val mediaPlaybackViewModel: MediaPlaybackViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        registerReceiver(musicBroadcastReceiver, IntentFilter().apply {
-            addAction("com.spotify.music.metadatachanged")
-            addAction("com.spotify.music.playbackstatechanged")
-        })
+        registerReceiver(musicBroadcastReceiver, MusicBroadcastReceiver.getIntentFilter())
+        mediaPlaybackViewModel.startListeningMediaPlaybackChanges()
 
         setContent {
             LyricsApp()
@@ -41,7 +43,9 @@ class MainActivity : BaseActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+
         unregisterReceiver(musicBroadcastReceiver)
+        mediaPlaybackViewModel.stopListeningMediaPlaybackChanges()
     }
 }
 
