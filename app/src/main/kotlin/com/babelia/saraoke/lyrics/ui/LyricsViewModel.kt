@@ -8,6 +8,7 @@ import com.babelia.saraoke.lyrics.GetSongLyricsAction
 import com.babelia.saraoke.lyrics.LyricsState
 import com.babelia.saraoke.lyrics.LyricsStore
 import com.babelia.saraoke.lyrics.Song
+import com.babelia.saraoke.network.LyricsAndSongArt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -59,13 +60,13 @@ class LyricsViewModel(app: Application) : BaseViewModel(app) {
 }
 
 @Suppress("UndocumentedPublicClass", "UndocumentedPublicFunction")
-data class LyricsViewData(val  lyrics: String) {
+data class LyricsViewData(val lyricsAndSongArt: LyricsAndSongArt) {
     companion object {
         fun from(state: LyricsState): Resource<LyricsViewData> = with(state) {
             return when {
                 songLyricsTask.isSuccess -> {
-                    if (songLyrics != null && songCurrentlyPlaying != null) {
-                        Resource.success(LyricsViewData(songLyrics))
+                    if (songLyricsAndArtUrl?.lyricsUrl != null && songCurrentlyPlaying != null) {
+                        Resource.success(LyricsViewData(songLyricsAndArtUrl))
                     } else {
                         Resource.failure(IllegalArgumentException("Not lyrics found for song: " +
                                 "${state.songCurrentlyPlaying}"))

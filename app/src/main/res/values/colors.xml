@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Main colors -->
+    <color name="dynamic_light">#F5FDFF</color>
+    <color name="purple">#675CD4</color>
+    <color name="deep_purple">#312D4E</color>
+
+    <color name="colorPrimary">@color/dynamic_light</color>
+    <color name="colorPrimaryDark">@color/deep_purple</color>
+    <color name="colorAccent">@color/purple</color>
+    <color name="backgroundColor">@color/deep_purple</color>
+
+</resources>

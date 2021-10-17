@@ -1,5 +1,6 @@
 package com.babelia.saraoke.lyrics
 
+import com.babelia.saraoke.network.LyricsAndSongArt
 import mini.Resource
 
 /**
@@ -20,5 +21,5 @@ interface LyricsController {
     /**
      * Get the lyrics of a song given a query.
      */
-    suspend fun getLyricsBySearchSong(song: Song): Resource<String>
+    suspend fun getLyricsBySearchSong(song: Song): Resource<LyricsAndSongArt>
 }

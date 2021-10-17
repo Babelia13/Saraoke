@@ -13,15 +13,15 @@ import org.kodein.di.compose.androidContextDI
 
 @Suppress("UndocumentedPublicFunction")
 @Composable
-fun MainNavGraph(modifier: Modifier,
-                 navController: NavHostController = rememberNavController(),
-                 startDestinationScreenType: ScreenType = LyricsScreenType.Lyrics) {
+fun NavigationGraph(modifier: Modifier,
+                    navController: NavHostController = rememberNavController(),
+                    startDestinationScreenType: ScreenType = LyricsScreenType.Lyrics) {
 
     NavHost(navController, startDestination = startDestinationScreenType.route) {
 
         composable(route = LyricsScreenType.Lyrics.route) {
             val lyricsViewModel: LyricsViewModel by it.viewModel(androidContextDI())
-            LyricsScreen(lyricsViewModel)
+            LyricsScreen(modifier, lyricsViewModel)
         }
     }
 }

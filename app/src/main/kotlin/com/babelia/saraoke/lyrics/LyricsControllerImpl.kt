@@ -8,16 +8,12 @@ import android.media.session.MediaSessionManager
 import android.media.session.MediaSessionManager.OnActiveSessionsChangedListener
 import android.media.session.PlaybackState
 import androidx.appcompat.app.AppCompatActivity
-import com.babelia.saraoke.network.LyricsApi
-import com.babelia.saraoke.network.NetworkModule
-import com.babelia.saraoke.network.getGeniusLyricsUrl
+import com.babelia.saraoke.network.*
 import com.babelia.saraoke.utils.SongNotFoungException
 import kotlinx.coroutines.*
 import mini.Dispatcher
 import mini.Resource
 import timber.log.Timber
-
-typealias PackageName = String
 
 /**
  * Implementation for [LyricsController] using the Genius REST API as backend.
@@ -108,15 +104,18 @@ class LyricsControllerImpl(private val context: Context,
     }
 
     private fun onMediaMetadataChanged(metadata: MediaMetadata) {
+        if (mediaController == null) return
+
         val artist = metadata.getString(MediaMetadata.METADATA_KEY_ARTIST)
         val album = metadata.getString(MediaMetadata.METADATA_KEY_ALBUM)
         val track = metadata.getString(MediaMetadata.METADATA_KEY_TITLE)
-        Timber.tag(MEDIA_LOGS_TAG).v("Metadata changed: $artist > $album > $track")
+        val durationInMs = metadata.getLong(MediaMetadata.METADATA_KEY_DURATION)
+        Timber.tag(MEDIA_LOGS_TAG).v("Metadata changed: $artist > $album > $track > $durationInMs")
         if (!artist.isNullOrEmpty() && !album.isNullOrEmpty() && !track.isNullOrEmpty()) {
             // dispatchBlocking because after receiving this action, GetLyricsOfSongAction is executed
             // and we need to finish the execution of NewSongPlayedOnSpotifyAction and theN dispatch
             // the other one. If not, as both actions act over the same state, it is not set properly
-            dispatcher.dispatchBlocking(NewSongPlayedAction(artist = artist, album = album, track = track))
+            dispatcher.dispatchBlocking(NewSongPlayedAction(artist, album, track, durationInMs.toInt()))
         }
     }
 
@@ -125,7 +124,7 @@ class LyricsControllerImpl(private val context: Context,
         mediaSessionManager = null
     }
 
-    override suspend fun getLyricsBySearchSong(song: Song): Resource<String> {
+    override suspend fun getLyricsBySearchSong(song: Song): Resource<LyricsAndSongArt> {
         return withContext(Dispatchers.IO) {
 
             var retry = true
@@ -135,13 +134,15 @@ class LyricsControllerImpl(private val context: Context,
                     var retryAttempts = 0
                     val querySearchResult = lyricsApi.getLyricsBySearch("${song.artist} ${song.track}")
                     while (retry) {
-                        val geniusLyricsUrl = querySearchResult.getGeniusLyricsUrl(song.artist, song.track)
-                            ?: return@withTimeout Resource.failure(SongNotFoungException)
+                        val geniusLyricsAndSongArt =
+                            querySearchResult.getGeniusLyricsUrlAndSongArtUrl(song.artist, song.track)
+                        val geniusLyricsUrl = geniusLyricsAndSongArt.first
+                                              ?: return@withTimeout Resource.failure(SongNotFoungException)
                         val lyrics = LyricsUtils.getLyricsFromGeniusUrl("${NetworkModule.GENIUS_URL}$geniusLyricsUrl")
 
                         if (lyrics != null) {
                             retry = false
-                            return@withTimeout Resource.success(lyrics)
+                            return@withTimeout Resource.success(LyricsAndSongArt(lyrics, geniusLyricsAndSongArt.second))
                         } else {
                             retryAttempts++
                             Timber.w("Error retrieving song lyrics, retry attempts: $retryAttempts")

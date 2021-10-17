@@ -18,11 +18,17 @@
             android:name="com.babelia.saraoke.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MaterialComponents.DayNight.NoActionBar">
+            android:banner="@drawable/banner"
+            android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
             </intent-filter>
         </activity>
 
@@ -33,7 +39,6 @@
                 <action android:name="com.spotify.music.playbackstatechanged"/>
             </intent-filter>
         </receiver>
-
         <service
             android:name=".lyrics.NotificationListener"
             android:label="@string/app_name"

@@ -2,27 +2,61 @@ package com.babelia.saraoke.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.babelia.saraoke.R
+
+val openSauceSansFontFamily = FontFamily(
+    Font(R.font.opensaucesans_regular),
+    Font(R.font.opensaucesans_italic, style = FontStyle.Italic),
+    Font(R.font.opensaucesans_medium, weight = FontWeight.Medium),
+    Font(R.font.opensaucesans_mediumitalic, weight = FontWeight.Medium, style = FontStyle.Italic),
+    Font(R.font.opensaucesans_bold, weight = FontWeight.Bold),
+    Font(R.font.opensaucesans_bolditalic, weight = FontWeight.Bold, style = FontStyle.Italic),
+    Font(R.font.opensaucesans_semibold, weight = FontWeight.SemiBold),
+    Font(R.font.opensaucesans_semibolditalic, weight = FontWeight.SemiBold, style = FontStyle.Italic),
+    Font(R.font.opensaucesans_light, weight = FontWeight.Light),
+    Font(R.font.opensaucesans_lightitalic, weight = FontWeight.Light, style = FontStyle.Italic),
+    Font(R.font.opensaucesans_black, weight = FontWeight.Black),
+    Font(R.font.opensaucesans_blackitalic, weight = FontWeight.Black, style = FontStyle.Italic),
+    Font(R.font.opensaucesans_extrabold, weight = FontWeight.ExtraBold),
+    Font(R.font.opensaucesans_extrabolditalic, weight = FontWeight.ExtraBold, style = FontStyle.Italic),
+    Font(R.font.opensaucesans_extrabolditalic, weight = FontWeight.ExtraLight, style = FontStyle.Italic),
+)
 
 // Set of Material typography styles to start with
 val Typography = Typography(
-    body1 = TextStyle(
-        fontFamily = FontFamily.Default,
+    defaultFontFamily = openSauceSansFontFamily,
+    h1 = TextStyle(
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 96.sp,
+    ),
+    h2 = TextStyle(
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 60.sp,
+    ),
+    h3 = TextStyle(
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 48.sp,
+    ),
+    h4 = TextStyle(
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    )
-    /* Other default text styles to override
-button = TextStyle(
-    fontFamily = FontFamily.Default,
-    fontWeight = FontWeight.W500,
-    fontSize = 14.sp
-),
-caption = TextStyle(
-    fontFamily = FontFamily.Default,
-    fontWeight = FontWeight.Normal,
-    fontSize = 12.sp
-)
-*/
+        fontSize = 34.sp,
+    ),
+    h5 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 27.sp,
+    ),
+    h6 = TextStyle(
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+    ),
+    button = TextStyle(
+        fontWeight = FontWeight.Bold,
+        fontSize = 12.sp,
+        letterSpacing = 1.25.sp
+    ),
 )

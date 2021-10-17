@@ -1,5 +1,6 @@
 package com.babelia.saraoke.lyrics
 
+import com.babelia.saraoke.network.LyricsAndSongArt
 import com.babelia.saraoke.network.LyricsApi
 import com.babelia.saraoke.utils.extensions.toTask
 import mini.Dispatcher
@@ -16,13 +17,16 @@ import timber.log.Timber
 
 @Suppress("UndocumentedPublicClass", "MagicNumber")
 data class LyricsState(val songLyricsTask: Task = Task.idle(),
-                       val songLyrics: String? = null,
+                       val songLyricsAndArtUrl: LyricsAndSongArt? = null,
                        val songCurrentlyPlaying: Song? = null) {
 
     override fun toString(): String {
         val songLyricsString =
-            if (songLyrics != null && songLyrics.length >= 75) "${songLyrics.substring(0, 75)}..."
-            else songLyrics
+            if (songLyricsAndArtUrl?.lyricsUrl != null && songLyricsAndArtUrl.lyricsUrl.length >= 75) {
+                "${songLyricsAndArtUrl.lyricsUrl.substring(0, 75)}..."
+            } else {
+                songLyricsAndArtUrl?.lyricsUrl
+            }
         return "LyricsState(" +
                 "songLyricsTask=$songLyricsTask, " +
                 "songCurrentlyPlaying=$songCurrentlyPlaying, " +
@@ -33,7 +37,10 @@ data class LyricsState(val songLyricsTask: Task = Task.idle(),
 /**
  * Information of a song.
  */
-data class Song(val artist: String, val album: String, val track: String)
+data class Song(val artist: String,
+                val album: String,
+                val track: String,
+                val durationInMs: Int)
 
 /**
  * Store in charge of handle [LyricsState] during the app's lifecycle.
@@ -64,8 +71,8 @@ class LyricsStore(private val lyricsController: LyricsController,
             }
             setState(
                 state.copy(
-                    songCurrentlyPlaying = Song(artist, album, track),
-                    songLyrics = null,
+                    songCurrentlyPlaying = Song(artist, album, track, durationInMs),
+                    songLyricsAndArtUrl = null,
                     songLyricsTask = Task.idle()
                 ))
         }
@@ -74,7 +81,7 @@ class LyricsStore(private val lyricsController: LyricsController,
     @Reducer
     suspend fun getLyricsOfSong(action: GetSongLyricsAction) {
         // Don't need to ask for the song lyrics again
-        if (state.songCurrentlyPlaying?.track == action.song.track && state.songLyrics != null) {
+        if (state.songCurrentlyPlaying?.track == action.song.track && state.songLyricsAndArtUrl != null) {
             Timber.d("GetSongLyricsAction song discarded. Lyrics already set")
             return
         }
@@ -85,7 +92,7 @@ class LyricsStore(private val lyricsController: LyricsController,
         val lyricsResource = lyricsController.getLyricsBySearchSong(action.song)
         setState(
             state.copy(
-                songLyrics = lyricsResource.getOrNull(),
+                songLyricsAndArtUrl = lyricsResource.getOrNull(),
                 songLyricsTask = lyricsResource.toTask()
             )
         )

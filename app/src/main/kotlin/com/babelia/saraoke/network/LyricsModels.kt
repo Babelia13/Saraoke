@@ -14,7 +14,7 @@ data class QuerySearchResult(
 /**
  * Find the best Genius song URL option inside the search request result.
  */
-fun QuerySearchResult.getGeniusLyricsUrl(artist: String, track: String): String? {
+fun QuerySearchResult.getGeniusLyricsUrlAndSongArtUrl(artist: String, track: String): Pair<String?, String?> {
     val hits = response.hits.filter {
         // Need this to remove hidden NBSP that cannot be replaced using .replace("&nbsp;", " ")
         val title = Jsoup.parse(it.result.title).text()
@@ -26,7 +26,7 @@ fun QuerySearchResult.getGeniusLyricsUrl(artist: String, track: String): String?
         isValidHit
     }
     val bestResult = hits.maxByOrNull { it.result.annotation_count }
-    return bestResult?.result?.path
+    return bestResult?.result?.path to bestResult?.result?.song_art_image_thumbnail_url
 }
 
 data class Meta(
@@ -78,3 +78,8 @@ data class PrimaryArtist(
     val name: String,
     val url: String
 )
+
+/**
+ * Data class used to store the lyrics and song art information in the same object for the API response.
+ */
+data class LyricsAndSongArt(val lyricsUrl: String?, val thumbnailUrl: String?)
