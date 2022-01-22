@@ -17,4 +17,4 @@ open class IllegalArgumentAppException(cause: String? = null): IllegalArgumentEx
 /**
  * Exception thrown when a specific song can not be found in the lyrics platform.
  */
-object SongNotFoungException: AppException()
+object SongNotFoundException: AppException()

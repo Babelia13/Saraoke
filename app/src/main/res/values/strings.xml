@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">"Saraoke"</string>
     <string name="song_lyrics_error_message">"Song lyrics cannot be loaded"</string>
+    <!-- Enable notification permission dialog -->
+    <string name="enable_notification_permission_dialog_title">"Grant access to notifications"</string>
+    <string name="enable_notification_permission_dialog_text">"In order to access to the songs you're listening, Saraoke needs you to enable the notification permission. Please, go to your device settings and enable it."</string>
+    <string name="enable_notification_permission_dialog_button">"Go to settings"</string>
 </resources>

@@ -11,7 +11,7 @@ interface LyricsController {
     /**
      * Start listening [MediaSessionManager] changes.
      */
-    fun startListeningMediaSessionManagerChanges()
+    fun startListeningMediaSessionManagerChanges(): Boolean
 
     /**
      * Stop listening [MediaSessionManager] changes.

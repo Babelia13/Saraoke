@@ -9,7 +9,7 @@ import android.media.session.MediaSessionManager.OnActiveSessionsChangedListener
 import android.media.session.PlaybackState
 import androidx.appcompat.app.AppCompatActivity
 import com.babelia.saraoke.network.*
-import com.babelia.saraoke.utils.SongNotFoungException
+import com.babelia.saraoke.utils.SongNotFoundException
 import kotlinx.coroutines.*
 import mini.Dispatcher
 import mini.Resource
@@ -66,9 +66,10 @@ class LyricsControllerImpl(private val context: Context,
         }
     }
 
-    override fun startListeningMediaSessionManagerChanges() {
-        // TODO Check notification permission and ask for it
-        if (NotificationListener.isEnabled(context)) {
+    override fun startListeningMediaSessionManagerChanges(): Boolean {
+        if (!NotificationListener.isEnabled(context)) {
+            return true
+        } else {
             try {
                 mediaSessionManager =
                     context.getSystemService(AppCompatActivity.MEDIA_SESSION_SERVICE) as MediaSessionManager
@@ -79,7 +80,7 @@ class LyricsControllerImpl(private val context: Context,
                 )
 
                 val mediaControllers = mediaSessionManager!!.getActiveSessions(className)
-                if (mediaControllers.isEmpty()) return
+                if (mediaControllers.isEmpty()) return false
                 // Given the documentation: The controllers will be provided in priority order with the most important
                 // controller at index 0
                 mediaControllers[0]?.let {
@@ -89,6 +90,7 @@ class LyricsControllerImpl(private val context: Context,
             } catch (e: Exception) {
                 Timber.e(e, "Error getting media sessions")
             }
+            return false
         }
     }
 
@@ -113,7 +115,7 @@ class LyricsControllerImpl(private val context: Context,
         Timber.tag(MEDIA_LOGS_TAG).v("Metadata changed: $artist > $album > $track > $durationInMs")
         if (!artist.isNullOrEmpty() && !album.isNullOrEmpty() && !track.isNullOrEmpty()) {
             // dispatchBlocking because after receiving this action, GetLyricsOfSongAction is executed
-            // and we need to finish the execution of NewSongPlayedOnSpotifyAction and theN dispatch
+            // and we need to finish the execution of NewSongPlayedOnSpotifyAction and then dispatch
             // the other one. If not, as both actions act over the same state, it is not set properly
             dispatcher.dispatchBlocking(NewSongPlayedAction(artist, album, track, durationInMs.toInt()))
         }
@@ -137,7 +139,7 @@ class LyricsControllerImpl(private val context: Context,
                         val geniusLyricsAndSongArt =
                             querySearchResult.getGeniusLyricsUrlAndSongArtUrl(song.artist, song.track)
                         val geniusLyricsUrl = geniusLyricsAndSongArt.first
-                                              ?: return@withTimeout Resource.failure(SongNotFoungException)
+                                              ?: return@withTimeout Resource.failure(SongNotFoundException)
                         val lyrics = LyricsUtils.getLyricsFromGeniusUrl("${NetworkModule.GENIUS_URL}$geniusLyricsUrl")
 
                         if (lyrics != null) {

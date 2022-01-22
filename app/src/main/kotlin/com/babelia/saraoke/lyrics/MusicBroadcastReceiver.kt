@@ -41,7 +41,7 @@ class MusicBroadcastReceiver : BaseBroadcastReceiver() {
 
                 if (!artist.isNullOrEmpty() && !album.isNullOrEmpty() && !track.isNullOrEmpty()) {
                     // dispatchBlocking because after receiving this action, GetLyricsOfSongAction is executed
-                    // and we need to finish the execution of NewSongPlayedOnSpotifyAction and theN dispatch
+                    // and we need to finish the execution of NewSongPlayedOnSpotifyAction and then dispatch
                     // the other one. If not, as both actions act over the same state, it is not set properly
                     dispatcher.dispatchBlocking(NewSongPlayedAction(artist, album, track, durationInMs))
                 }

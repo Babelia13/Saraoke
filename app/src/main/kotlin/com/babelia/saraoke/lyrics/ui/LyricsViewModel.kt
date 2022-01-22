@@ -4,10 +4,7 @@ import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.babelia.saraoke.BaseViewModel
-import com.babelia.saraoke.lyrics.GetSongLyricsAction
-import com.babelia.saraoke.lyrics.LyricsState
-import com.babelia.saraoke.lyrics.LyricsStore
-import com.babelia.saraoke.lyrics.Song
+import com.babelia.saraoke.lyrics.*
 import com.babelia.saraoke.network.LyricsAndSongArt
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +32,9 @@ class LyricsViewModel(app: Application) : BaseViewModel(app) {
     val currentSongFlow: StateFlow<Song?> get() = _currentSongFlow
 
     init {
+        viewModelScope.launch {
+            dispatcher.dispatch(StartListeningMediaPlaybackChangesAction)
+        }
 
         lyricsStore.flow()
             .selectNotNull { it.songCurrentlyPlaying }
@@ -69,7 +69,7 @@ data class LyricsViewData(val lyricsAndSongArt: LyricsAndSongArt) {
                         Resource.success(LyricsViewData(songLyricsAndArtUrl))
                     } else {
                         Resource.failure(IllegalArgumentException("Not lyrics found for song: " +
-                                "${state.songCurrentlyPlaying}"))
+                                                                  "${state.songCurrentlyPlaying}"))
                     }
                 }
                 songLyricsTask.isFailure ->

@@ -21,16 +21,26 @@ data class Dimensions(
 data class GeneralDimensions(
     val layout_padding: Dp = 16.dp,
     val elevation: Dp = 10.dp,
+    // Dialogs
+    val dialog_width: Dp = 320.dp,
+    val dialog_internal_padding: Dp = 16.dp,
+    val dialog_button_padding_top: Dp = 4.dp,
+    val dialog_button_internal_padding: Dp = 16.dp,
+    val alert_dialog_button_text_size: TextUnit = 16.sp,
 )
 val smallTabletGeneralDimensions = GeneralDimensions(
     layout_padding = 32.dp,
+    dialog_width = 474.dp,
 )
+
 val largeTabletGeneralDimensions = smallTabletGeneralDimensions.copy(
     layout_padding = 42.dp,
+    dialog_width = 582.dp,
 )
 
 val tvGeneralDimensions = GeneralDimensions(
     layout_padding = 52.dp,
+    dialog_width = 600.dp,
 )
 
 /**

@@ -24,3 +24,14 @@ fun String.unaccent(): String {
     val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
     return REGEX_UNACCENT.replace(temp, "")
 }
+
+/**
+ * Clean blank lines of the given [String].
+ */
+fun String.cleanBlankLines(): String {
+    var newString = replace("\n ", "")
+    while(newString.contains("\n\n")) {
+        newString = newString.replace("\n\n", "\n")
+    }
+    return newString
+}

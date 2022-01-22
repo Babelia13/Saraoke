@@ -2,4 +2,8 @@
 <resources>
     <string name="app_name">"Saraoke"</string>
     <string name="song_lyrics_error_message">"No se ha encontrado la letra de la canción"</string>
+    <!-- Enable notification permission dialog -->
+    <string name="enable_notification_permission_dialog_title">"Acceso a notificaciones"</string>
+    <string name="enable_notification_permission_dialog_text">"Para poder acceder a las canciones que estás escuchando, Saraoke necesita que actives el permiso de notificaciones. Por favor, accede a los ajustes de tu dispositivo para activar el permiso."</string>
+    <string name="enable_notification_permission_dialog_button">"Acceder a ajustes"</string>
 </resources>

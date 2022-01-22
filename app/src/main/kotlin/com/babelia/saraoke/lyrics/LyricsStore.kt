@@ -16,7 +16,8 @@ import retrofit2.Retrofit
 import timber.log.Timber
 
 @Suppress("UndocumentedPublicClass", "MagicNumber")
-data class LyricsState(val songLyricsTask: Task = Task.idle(),
+data class LyricsState(val needToAskForNotificationPermission: Boolean = false,
+                       val songLyricsTask: Task = Task.idle(),
                        val songLyricsAndArtUrl: LyricsAndSongArt? = null,
                        val songCurrentlyPlaying: Song? = null) {
 
@@ -51,7 +52,9 @@ class LyricsStore(private val lyricsController: LyricsController,
 
     @Reducer
     fun startListeningMediaPlaybackChanges(action: StartListeningMediaPlaybackChangesAction) {
-        lyricsController.startListeningMediaSessionManagerChanges()
+        setState(
+            state.copy(needToAskForNotificationPermission = lyricsController.startListeningMediaSessionManagerChanges())
+        )
     }
 
     @Reducer
